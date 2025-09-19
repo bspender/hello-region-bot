@@ -39,8 +39,18 @@ npm start
 ```
 
 #### Custom Region
+
+**Bash (Mac/Linux):**
+
 ```bash
-DEPLOY_REGION=us-east-1 npm start
+DEPLOY_REGION=EastUS npm start
+```
+
+**PowerShell (Windows):**
+
+```powershell
+$env:DEPLOY_REGION="EastUS"
+npm start
 ```
 
 The bot will start on port 3978 by default.
@@ -130,10 +140,9 @@ The recommended way to test the bot interactively:
 
 The bot can be deployed to various cloud platforms. Set the `DEPLOY_REGION` environment variable to reflect the actual deployment region:
 
+- `DEPLOY_REGION=centralus` for Azure Central US
 - `DEPLOY_REGION=us-east-1` for AWS US East
-- `DEPLOY_REGION=us-west-2` for AWS US West  
 - `DEPLOY_REGION=europe-west1` for Google Cloud Europe
-- `DEPLOY_REGION=eastus` for Azure East US
 
 ## Troubleshooting
 
