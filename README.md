@@ -12,8 +12,9 @@ An Azure Bot Framework POC with regional awareness functionality built using the
 
 ## Requirements
 
-- Node.js 18.0.0 or higher
+- Node.js 18.0.0 or higher (required for ES modules support)
 - npm or yarn package manager
+- Microsoft 365 Agents Playground (for interactive testing): `npx @microsoft/agents-playground`
 
 ## Installation
 
@@ -70,6 +71,14 @@ The bot uses the Microsoft 365 Agents SDK with the following key components:
 - **AgentApplication**: Main application class for handling conversations
 - **MemoryStorage**: In-memory storage for bot state
 
+### ES Modules Configuration
+
+This project is configured as an ES module:
+
+- `"type": "module"` in package.json enables ES module syntax
+- Uses `import`/`export` instead of `require`/`module.exports`
+- Compatible with modern Node.js versions (18+)
+
 ## Development
 
 ### Running in Development Mode
@@ -93,6 +102,30 @@ Expected response:
 }
 ```
 
+### Testing with M365 Agents Playground
+
+The recommended way to test the bot interactively:
+
+1. Start the bot locally:
+
+   ```bash
+   npm start
+   ```
+
+2. In a separate terminal, start the M365 Agents Playground:
+
+   ```bash
+   npx @microsoft/agents-playground start
+   ```
+
+3. The playground will connect to your local bot at `http://localhost:3978/api/messages`
+
+4. Test the bot functionality:
+   - Initial connection should show a welcome message
+   - Try "hello" or "hi" for greetings
+   - Ask "Where are you running?" to test region awareness
+   - Send any other message to test echo functionality
+
 ## Deployment
 
 The bot can be deployed to various cloud platforms. Set the `DEPLOY_REGION` environment variable to reflect the actual deployment region:
@@ -101,6 +134,37 @@ The bot can be deployed to various cloud platforms. Set the `DEPLOY_REGION` envi
 - `DEPLOY_REGION=us-west-2` for AWS US West  
 - `DEPLOY_REGION=europe-west1` for Google Cloud Europe
 - `DEPLOY_REGION=eastus` for Azure East US
+
+## Troubleshooting
+
+### Port Already in Use Error
+
+If you see `EADDRINUSE: address already in use :::3978`:
+
+**Windows:**
+```bash
+taskkill /f /im node.exe
+```
+
+**Mac/Linux:**
+```bash
+pkill -f node
+# or find the specific process
+lsof -ti:3978 | xargs kill -9
+```
+
+### Bot Not Responding
+
+1. Verify the bot is running on the correct port (3978)
+2. Check the console for error messages
+3. Restart both the bot and the M365 Agents Playground
+4. Ensure no firewall is blocking localhost connections
+
+### M365 Agents Playground Connection Issues
+
+1. Make sure the bot is started first
+2. Verify the playground is connecting to `http://localhost:3978/api/messages`
+3. Check that both processes are running in separate terminals
 
 ## License
 

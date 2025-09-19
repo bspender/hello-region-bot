@@ -14,37 +14,38 @@ const app = new AgentApplication({
     storage: memoryStorage
 });
 
-// Handle greeting messages
-app.onMessage(['hello', 'hi', 'hey'], async (context, state) => {
-    const responseText = `Hello! I'm running in the "${DEPLOY_REGION}" region. How can I help you today?`;
-    await context.sendActivity(responseText);
-});
-
-// Handle region inquiry messages
-app.onMessage(['where are you running', 'where are you', 'region'], async (context, state) => {
-    const responseText = `I am currently running in the "${DEPLOY_REGION}" region.`;
-    await context.sendActivity(responseText);
-});
-
-// Handle all other messages (echo functionality)
+// Handle all messages with a single handler
 app.onMessage(async (context, state) => {
-    const userMessage = context.activity.text?.trim();
-    
-    if (!userMessage) {
-        const responseText = 'Hello! I\'m your regional awareness bot. Ask me "Where are you running?" to learn about my deployment region, or just chat with me!';
-        await context.sendActivity(responseText);
-    } else {
-        // Check if this message was already handled by specific handlers
+    try {
+        const userMessage = context.activity.text?.trim() || '';
         const lowerMessage = userMessage.toLowerCase();
-        if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey') ||
-            lowerMessage.includes('where are you running') || lowerMessage.includes('where are you') || lowerMessage.includes('region')) {
-            // Already handled by specific handlers, do nothing
+        
+        // Skip empty messages - let the conversation update handler take care of initial greetings
+        if (!userMessage) {
             return;
         }
         
-        // Echo back the user's message
+        // Handle greeting messages
+        if (lowerMessage.includes('hello') || lowerMessage.includes('hi') || lowerMessage.includes('hey')) {
+            const responseText = `Hello! I'm running in the "${DEPLOY_REGION}" region. How can I help you today?`;
+            await context.sendActivity(responseText);
+            return;
+        }
+        
+        // Handle region inquiry messages
+        if (lowerMessage.includes('where are you running') || lowerMessage.includes('where are you') || lowerMessage.includes('region')) {
+            const responseText = `I am currently running in the "${DEPLOY_REGION}" region.`;
+            await context.sendActivity(responseText);
+            return;
+        }
+        
+        // Echo back all other messages
         const responseText = `You said: "${userMessage}"`;
         await context.sendActivity(responseText);
+        
+    } catch (error) {
+        console.error('Message handler error:', error);
+        await context.sendActivity('Sorry, I encountered an error processing your message. Please try again.');
     }
 });
 
